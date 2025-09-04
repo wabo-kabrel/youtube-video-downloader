@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader</title>
+    <!-- CSS stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="Container">
+        <h1>YouTube Video Downloader</h1>
+        <p class="subtitle">Paste the URL of the YouTube video you want to download.</p>
+
+        <!-- Form to submit the YouTube URL-->
+         <form action="/download" method="POST" class="url-form">
+            <input type="text" name="video_url" placeholder="https://www.youtube.com/watch?v=..." required>
+            <button type="submit">Download</button>
+         </form>
+
+         <!-- Display error message if an error exists -->
+         {% if error %}
+            <p class="error">{{ error }}</p>
+         {% endif %}
+    </div>
+</body>
+</html>
