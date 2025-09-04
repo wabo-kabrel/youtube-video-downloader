@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Video</title>
+    <!-- Link to CSS Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="video-details">
+            <img src="{{ thumbnail_url }}" alt="Video Thumbnail" class="Thumbnail">
+            <h2>{{ video_title }}</h2>
+        </div>
+
+        <div class="download-options">
+            <h3>Download Options</h3>
+
+            <!-- Video Download Links-->
+            <div class="button-group">
+                {% for stream in video_streams %}
+                <form action="{{ stream.url }}" method="GET" style="display: inline;">
+                    <button type="submit" class="download-btn">
+                        {{ stream.resolution }}
+                    </button>
+                </form>
+                {% endfor %}
+            </div>
+
+            <!-- Audio download link -->
+            {% if audio_stream %}
+            <h4>Audio Only (M4A)</h4>
+            <div class="button-group">
+                 <form action="{{ audio_stream.url }}" method="GET" style="display: inline;">
+                    <button type="submit" class="download-btn audio-btn">
+                        Download Audio
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+        </div>
+        <a href="/" class="back-link">&larr; Download another video</a>
+    </div>
+</body>
+</html>
