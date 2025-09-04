@@ -1,0 +1,165 @@
+/* General Body Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Main Container */
+.container {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Headings and Subtitles */
+h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* URL Input Form */
+.url-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.url-form input[type="text"] {
+    flex-grow: 1;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.url-form input[type="text"]:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.url-form button {
+    padding: 12px 25px;
+    font-size: 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 500;
+}
+
+.url-form button:hover {
+    background-color: #2980b9;
+}
+
+/* Error Message */
+.error-message {
+    color: #e74c3c;
+    background-color: #fbe2e2;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+/* Download Page Specifics */
+.video-details {
+    margin-bottom: 30px;
+}
+
+.thumbnail {
+    width: 100%;
+    max-width: 320px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.video-details h2 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.download-options {
+    text-align: left;
+}
+
+.download-options h3, .download-options h4 {
+    color: #34495e;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.download-options h4 {
+    font-size: 1rem;
+    margin-top: 25px;
+}
+
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.download-btn {
+    background-color: #2ecc71;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.download-btn:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+}
+
+.download-btn.audio-btn {
+    background-color: #9b59b6;
+}
+
+.download-btn.audio-btn:hover {
+    background-color: #8e44ad;
+}
+
+
+.back-link {
+    display: inline-block;
+    margin-top: 30px;
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.back-link:hover {
+    color: #2980b9;
+}
