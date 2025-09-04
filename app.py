@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for
-from pytube import YouTube
+from flask import Flask, render_template, request, redirect, url_for, send_file
+import yt_dlp
 import os
+import uuid
 
 # Initialization of the Flask application
 app = Flask(__name__)
@@ -13,33 +14,36 @@ def index():
 # Route to handle form submission and display download options
 @app.route('/download', methods=['POST'])
 def download():
-    video_url = request.form['url']
+    video_url = request.form['video_url']
     try:
-        yt = YouTube(video_url)
+        # Get video info
+        ydl_opts = {
+            'quiet': True,
+            'skip_download': True,
+            'format': 'bestvideo+bestaudio/best',
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(video_url, download=False)
+        
+        video_title = info.get('title')
+        thumbnail_url = info.get('thumbnail')
+        formats = info.get('formats', [])
 
-        # Extract video details
-        video_title = yt.title
-        thumbnail_url = yt.thumbnail_url
+        # Filter for video and audio formats
+        video_streams = [f for f in formats if f.get('vcodec') != 'none' and f.get('acodec') != 'none' and f.get('ext') == 'mp4']
+        audio_streams = [f for f in formats if f.get('vcodec') == 'none' and f.get('acodec') != 'none']
 
-        # Get all available video streams (different resolutions)
-        video_streams = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc()
+        audio_stream = audio_streams[0] if audio_streams else None
 
-        # Provide an audio-only stream option
-        audio_stream = yt.streams.filter(only_audio=True, file_extension='mp4').first()
-
-        # Pass all video details to the download.html template    
         return render_template('download.html',
                                video_title=video_title,
                                thumbnail_url=thumbnail_url,
-                               audio_stream=audio_stream, 
-                               video_url=video_url)        # Passes the original video URL to the template
-    
+                               audio_stream=audio_stream,
+                               video_streams=video_streams,
+                               video_url=video_url)
     except Exception as e:
-        # Handle errors (e.g., invalid URL, video unavailable)
         print(f"Error: {e}")
-
-        # Redirect to an error page or show a message on the index page
-        return redirect(url_for('index', error = "Invalid URL or video unavailable. Please try again."))
+        return redirect(url_for('index', error=f"Error: {e}"))
     
 # Route to handle the actual download request
 @app.route('/download_file', methods=['POST'])
@@ -47,17 +51,25 @@ def download_file():
     """Handling of the actual download of the selected video or audio stream.
         This demonstrates downloading the file to the server and then sending it to the user."""
     video_url = request.form['video_url']
-    itag = request.form['itag']
-
+    format_id = request.form['format_id']
+    temp_filename = f"temp_{uuid.uuid4()}.%(ext)s"
+    ydl_opts = {
+        'format': format_id,
+        'outtmpl': temp_filename,
+        'quiet': True,
+    }
     try:
-        yt = YouTube(video_url)
-        stream = yt.streams.get_by_itag(itag)
-        return redirect(stream.url)     # Redirects the user to the file's URL for download, instead of downloading to our server.
-    
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(video_url, download=True)
+            filename = ydl.prepare_filename(info)
+        return send_file(filename, as_attachment=True)
     except Exception as e:
         print(f"Error downloading file: {e}")
-        return redirect(url_for('index', error = "Could not download the file. Please try again."))
-    
+        return redirect(url_for('index', error="Could not download the file. Please try again."))
+    finally:
+        # Clean up temp file after sending (optional, for production)
+        if os.path.exists(filename):
+            os.remove(filename)
 # Run the Flask application
 if __name__ == '__main__':
     app.run(debug=True)        # Debug mode for development, which provides helpful error messages

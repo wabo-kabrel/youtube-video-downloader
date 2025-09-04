@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Download Video</title>
-    <!-- Link to CSS Stylesheet -->
+    <!-- Link to CSS stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,19 +14,22 @@
 <body>
     <div class="container">
         <div class="video-details">
-            <img src="{{ thumbnail_url }}" alt="Video Thumbnail" class="Thumbnail">
+            <img src="{{ thumbnail_url }}" alt="Video Thumbnail" class="thumbnail">
             <h2>{{ video_title }}</h2>
         </div>
 
         <div class="download-options">
             <h3>Download Options</h3>
-
-            <!-- Video Download Links-->
+            
+            <!-- Video download links -->
+            <h4>Video (MP4)</h4>
             <div class="button-group">
                 {% for stream in video_streams %}
-                <form action="{{ stream.url }}" method="GET" style="display: inline;">
+                <form action="{{ url_for('download_file') }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="video_url" value="{{ video_url }}">
+                    <input type="hidden" name="format_id" value="{{ stream.format_id }}">
                     <button type="submit" class="download-btn">
-                        {{ stream.resolution }}
+                        {{ stream.format_note or stream.resolution or stream.height ~ 'p' }}
                     </button>
                 </form>
                 {% endfor %}
@@ -34,9 +37,11 @@
 
             <!-- Audio download link -->
             {% if audio_stream %}
-            <h4>Audio Only (M4A)</h4>
+            <h4>Audio Only ({{ audio_stream.ext|upper }})</h4>
             <div class="button-group">
-                 <form action="{{ audio_stream.url }}" method="GET" style="display: inline;">
+                 <form action="{{ url_for('download_file') }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="video_url" value="{{ video_url }}">
+                    <input type="hidden" name="format_id" value="{{ audio_stream.format_id }}">
                     <button type="submit" class="download-btn audio-btn">
                         Download Audio
                     </button>
