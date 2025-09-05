@@ -16,7 +16,7 @@ A simple web application built with Flask that allows users to download YouTube 
 - Docker (optional, for containerized deployment)
 - **FFmpeg** (required for merging video and audio; see below)
 
-## FFmpeg Requirement
+### FFmpeg Requirement
 
 This application uses [yt-dlp](https://github.com/yt-dlp/yt-dlp), which requires the [FFmpeg](https://ffmpeg.org/) executable to be installed on your system for merging video and audio streams.
 
