@@ -163,3 +163,84 @@ h1 {
 .back-link:hover {
     color: #2980b9;
 }
+
+/* Loader Animation */
+.loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+    body {
+        padding: 5px;
+    }
+    .container {
+        padding: 16px 8px;
+        max-width: 98vw;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
+    h1 {
+        font-size: 1.4rem;
+    }
+    .subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 18px;
+    }
+    .url-form {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .url-form input[type="text"], .url-form button {
+        font-size: 1rem;
+        padding: 10px 12px;
+        border-radius: 6px;
+    }
+    .thumbnail {
+        max-width: 98vw;
+        margin-bottom: 12px;
+    }
+    .video-details h2 {
+        font-size: 1.1rem;
+    }
+    .download-options h3, .download-options h4 {
+        font-size: 1rem;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+    .button-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .download-btn, .download-btn.audio-btn {
+        width: 100%;
+        font-size: 1rem;
+        padding: 12px 0;
+    }
+    .back-link {
+        margin-top: 18px;
+        font-size: 1rem;
+    }
+    .loader {
+        width: 32px;
+        height: 32px;
+        border-width: 5px;
+    }
+}
+
+/* Improve spinner visibility on mobile */
+#spinner {
+    margin-top: 20px;
+    text-align: center;
+}

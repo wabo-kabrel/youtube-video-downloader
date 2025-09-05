@@ -17,7 +17,7 @@
         
         <!-- Form to submit the YouTube URL -->
         <form action="/download" method="POST" class="url-form">
-            <input type="text" name="video_url" placeholder="https://www.youtube.com/watch?v=..." required>
+            <input type="text" name="video_url" placeholder="https://www.youtube.com/watch?v=..." required autocomplete="off">
             <button type="submit">Download</button>
         </form>
 
@@ -25,6 +25,18 @@
         {% if error %}
             <p class="error-message">{{ error }}</p>
         {% endif %}
+
+        <div id="spinner" style="display:none;">
+            <div class="loader"></div>
+            <p>Loading, please wait...</p>
+        </div>
     </div>
+
+    <!-- JavaScript to show the spinner when the form is submitted -->
+    <script>
+    document.querySelector('.url-form').addEventListener('submit', function() {
+        document.getElementById('spinner').style.display = 'block';
+    });
+    </script>
 </body>
 </html>

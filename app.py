@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, after_this_request
 import yt_dlp
 import os
 import uuid
@@ -30,7 +30,7 @@ def download():
         formats = info.get('formats', [])
 
         # Filter for video and audio formats
-        video_streams = [f for f in formats if f.get('vcodec') != 'none' and f.get('acodec') != 'none' and f.get('ext') == 'mp4']
+        video_streams = [f for f in formats if f.get('vcodec') != 'none' and f.get('ext') == 'mp4']
         audio_streams = [f for f in formats if f.get('vcodec') == 'none' and f.get('acodec') != 'none']
 
         audio_stream = audio_streams[0] if audio_streams else None
@@ -48,28 +48,30 @@ def download():
 # Route to handle the actual download request
 @app.route('/download_file', methods=['POST'])
 def download_file():
-    """Handling of the actual download of the selected video or audio stream.
-        This demonstrates downloading the file to the server and then sending it to the user."""
     video_url = request.form['video_url']
     format_id = request.form['format_id']
-    temp_filename = f"temp_{uuid.uuid4()}.%(ext)s"
+    temp_filename = f"temp_{uuid.uuid4()}.mp4"
     ydl_opts = {
-        'format': format_id,
+        'format': f'{format_id}+bestaudio/best',
         'outtmpl': temp_filename,
         'quiet': True,
+        'merge_output_format': 'mp4',  # Ensures ffmpeg merges video+audio
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=True)
-            filename = ydl.prepare_filename(info)
+            filename = temp_filename
+        @after_this_request
+        def remove_file(response):
+            try:
+                os.remove(filename)
+            except Exception as e:
+                print(f"Error deleting temp file: {e}")
+            return response
         return send_file(filename, as_attachment=True)
     except Exception as e:
         print(f"Error downloading file: {e}")
         return redirect(url_for('index', error="Could not download the file. Please try again."))
-    finally:
-        # Clean up temp file after sending (optional, for production)
-        if os.path.exists(filename):
-            os.remove(filename)
 # Run the Flask application
 if __name__ == '__main__':
     app.run(debug=True)        # Debug mode for development, which provides helpful error messages

@@ -4,3 +4,4 @@ __pycache__
 instance
 temp_*.*
 .txt
+.pytest_cache
