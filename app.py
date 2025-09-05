@@ -74,5 +74,5 @@ def download_file():
         return redirect(url_for('index', error="Could not download the file. Please try again."))
 # Run the Flask application
 if __name__ == '__main__':
-    app.run(debug=True)        # Debug mode for development, which provides helpful error messages
-                               # and automatically reloads the server when changes are made.
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
