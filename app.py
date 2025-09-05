@@ -9,19 +9,22 @@ app = Flask(__name__)
 # Route for the home page
 @app.route('/')
 def index():
-    return render_template('index.html')
+    error = request.args.get('error')
+    return render_template('index.html', error=error)
 
 # Route to handle form submission and display download options
 @app.route('/download', methods=['POST'])
 def download():
     video_url = request.form['video_url']
     try:
-        # Get video info
+        # Get video info, pass cookies.txt if available
         ydl_opts = {
             'quiet': True,
             'skip_download': True,
             'format': 'bestvideo+bestaudio/best',
         }
+        if os.path.exists('cookies.txt'):
+            ydl_opts['cookies'] = 'cookies.txt'
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
         
@@ -29,7 +32,7 @@ def download():
         thumbnail_url = info.get('thumbnail')
         formats = info.get('formats', [])
 
-        # Filter for video and audio formats
+        # Filter for all mp4 video formats (including video-only)
         video_streams = [f for f in formats if f.get('vcodec') != 'none' and f.get('ext') == 'mp4']
         audio_streams = [f for f in formats if f.get('vcodec') == 'none' and f.get('acodec') != 'none']
 
@@ -44,7 +47,7 @@ def download():
     except Exception as e:
         print(f"Error: {e}")
         return redirect(url_for('index', error=f"Error: {e}"))
-    
+
 # Route to handle the actual download request
 @app.route('/download_file', methods=['POST'])
 def download_file():
@@ -57,6 +60,8 @@ def download_file():
         'quiet': True,
         'merge_output_format': 'mp4',  # Ensures ffmpeg merges video+audio
     }
+    if os.path.exists('cookies.txt'):
+        ydl_opts['cookies'] = 'cookies.txt'
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=True)
@@ -71,7 +76,8 @@ def download_file():
         return send_file(filename, as_attachment=True)
     except Exception as e:
         print(f"Error downloading file: {e}")
-        return redirect(url_for('index', error="Could not download the file. Please try again."))
+        return redirect(url_for('index', error=f"Could not download the file. {e}"))
+
 # Run the Flask application
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
